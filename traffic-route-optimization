@@ -1,0 +1,64 @@
+import heapq
+graph = {
+    "A": [("B", 4), ("C", 2)],
+    "B": [("A", 4), ("C", 1), ("D", 5)],
+    "C": [("A", 2), ("B", 1), ("D", 8), ("E", 10)],
+    "D": [("B", 5), ("C", 8), ("E", 2)],
+    "E": [("C", 10), ("D", 2)]
+}
+def dijkstra(start, destination):
+    distances = {node: float("inf") for node in graph}
+    previous = {node: None for node in graph}
+    distances[start] = 0
+    priority_queue = [(0, start)]
+    while priority_queue:
+        current_distance, current_node = heapq.heappop(priority_queue)
+        if current_node == destination:
+            break
+        if current_distance > distances[current_node]:
+            continue
+        for neighbor, weight in graph[current_node]:
+            new_distance = current_distance + weight
+            if new_distance < distances[neighbor]:
+                distances[neighbor] = new_distance
+                previous[neighbor] = current_node
+                heapq.heappush(
+                    priority_queue,
+                    (new_distance, neighbor)
+                )
+    path = []
+    current = destination
+    while current is not None:
+        path.append(current)
+        current = previous[current]
+    path.reverse()
+    return path, distances[destination]
+print("======================================")
+print("     TRAFFIC ROUTE OPTIMIZATION")
+print("======================================")
+print("\nLocations:")
+print("A - B - C - D - E")
+start = input("\nEnter starting location: ").upper()
+destination = input("Enter destination: ").upper()
+if start in graph and destination in graph:
+    path, distance = dijkstra(start, destination)
+    print("\n===== OPTIMIZED ROUTE =====")
+    print("Route:", " -> ".join(path))
+    print("Total Distance/Cost:", distance)
+else:
+    print("\nInvalid location entered.")
+
+OUTPUT:
+======================================
+     TRAFFIC ROUTE OPTIMIZATION
+======================================
+
+Locations:
+A - B - C - D - E
+
+Enter starting location: A
+Enter destination: E
+
+===== OPTIMIZED ROUTE =====
+Route: A -> C -> B -> D -> E
+Total Distance/Cost: 10
